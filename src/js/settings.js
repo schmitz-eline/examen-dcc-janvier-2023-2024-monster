@@ -12,6 +12,8 @@ export const settings = {
     playerNameId: 'player-name',
     healthMaxValue: 100,
     givUpName: 'give-up',
+    labelSelector: 'label',
+    progressSelector: 'progress',
     play_again_message: 'Rejouer',
     defaultPlayerName2: 'Monster',
     lost_message: (name) => `<p class="log__item">${name} a perdu !</p>`,

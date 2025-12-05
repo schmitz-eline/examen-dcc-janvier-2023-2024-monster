@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="icon.png">
     <meta name="theme-color" content="#fafafa">
+    <script defer type="module" src="./src/js/main.js"></script>
 </head>
 
 <body>
@@ -19,13 +20,13 @@
     <section class="player-container__player">
         <p class="player-container__player__avatar">👨‍💻</p>
         <h2 id="player-name" class="player-container__player__header">Vous</h2>
-        <label for="you-progress">100% de vie restante</label>
+        <label for="you-progress">100 % de vie restante</label>
         <progress id="you-progress" max="100" value="100"></progress>
     </section>
     <section class="player-container__player">
         <p class="player-container__player__avatar">👹</p>
         <h2 class="player-container__player__header">Le monster</h2>
-        <label for="monster-progress">100% de vie restante</label>
+        <label for="monster-progress">100 % de vie restante</label>
         <progress id="monster-progress" max="100" value="100"></progress>
     </section>
 </div>
@@ -43,6 +44,5 @@
 
 <ul class="log"></ul>
 
-<script type="module" src="./src/js/main.js"></script>
 </body>
 </html>
