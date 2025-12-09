@@ -1,6 +1,7 @@
 export const settings = {
     defaultPlayerName1: 'John',
     playGameFormId: 'play-game',
+    submitButtonSelector: 'button[type="submit"]',
     // Attention il y en a 2. 👌
     players_container_selector: '.player-container__player',
     logContainerSelector: '.log',

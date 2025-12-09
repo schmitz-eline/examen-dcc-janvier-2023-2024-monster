@@ -1,46 +1,61 @@
-import {Player} from './Player';
-import {settings} from './settings';
+import {Player} from "./Player";
+import {settings} from "./settings";
 
 const monsterGame = {
     init() {
         this.players = [new Player(settings.defaultPlayerName1), new Player(settings.defaultPlayerName2)];
         this.formElement = document.getElementById(settings.playGameFormId);
-        this.labelPlayerElement = document.getElementById(settings.playerNameId);
-        this.controlElement = document.querySelector(settings.controlDivSelector);
-        this.actionsButtons = document.querySelectorAll(settings.actionsSelector);
+        this.playerNameElement = document.getElementById(settings.playerNameId);
+        this.controlDivElement = document.querySelector(settings.controlDivSelector);
+        this.actionButtonElements = document.querySelectorAll(settings.actionsSelector);
         this.cardElements = document.querySelectorAll(settings.players_container_selector);
         this.logElement = document.querySelector(settings.logContainerSelector);
-        this.addEventListeners();
+        this.submitButtonElement = document.querySelector(settings.submitButtonSelector);
+
+        this.eventListeners();
     },
 
-    hideFormAndShowControls(evt) {
-        evt.currentTarget.classList.add(settings.hideElementClass);
-        this.controlElement.classList.remove(settings.hideElementClass);
+    eventListeners() {
+        this.formElement.addEventListener('submit', (event) => {
+            event.preventDefault();
+            this.updatePlayerName(event);
+            this.hideFormAndShowControls();
+            this.logElement.innerHTML = '';
+            for (let i = 0; i < this.players.length; i++) {
+                this.players[i].health = settings.healthMaxValue;
+                this.updateCards(i);
+            }
+        });
+
+        this.actionButtonElements.forEach((button) => {
+            button.addEventListener('click', (event) => {
+                if (event.currentTarget.dataset.name === 'give-up') {
+                    this.lostGame(this.players[0].name);
+                } else {
+                    this.play(event.currentTarget.dataset.name);
+                }
+            });
+        });
     },
 
-    changePlayerName(evt) {
-        evt.preventDefault();
-        this.players[0].name = evt.currentTarget.querySelector('input').value;
-        this.labelPlayerElement.textContent = this.players[0].name;
-        this.hideFormAndShowControls(evt);
+    updatePlayerName(event) {
+        this.players[0].name = event.currentTarget.querySelector('input').value;
+        this.playerNameElement.textContent = event.currentTarget.querySelector('input').value;
     },
 
-    updateCard(i) {
-        this.cardElements[i].querySelector(settings.labelSelector).textContent = settings.remaining_life_message(this.players[i].health);
-        this.cardElements[i].querySelector(settings.progressSelector).value = this.players[i].health;
-    },
-
-    displayLogs(name, i, damage) {
-        this.logElement.insertAdjacentHTML('beforeend', settings.actions[name].message(this.players[i], damage));
+    hideFormAndShowControls() {
+        this.formElement.classList.add(settings.hideElementClass);
+        this.controlDivElement.classList.remove(settings.hideElementClass);
     },
 
     play(name) {
         let gameOverName = null;
+
         for (let i = 0; i < this.players.length; i++) {
             const damage = Math.floor(Math.random() * settings.actions[name].max_impact);
             this.players[i].health += damage;
-            this.updateCard(i);
-            this.displayLogs(name, i, damage);
+            this.updateCards(i);
+            this.displayLogs(name, damage, i);
             if (this.players[i].health <= 0) {
                 gameOverName = this.players[i].name;
             }
@@ -51,36 +66,21 @@ const monsterGame = {
         }
     },
 
-    start(evt) {
-        this.players = [new Player(settings.defaultPlayerName1), new Player(settings.defaultPlayerName2)];
-        this.changePlayerName(evt);
-        this.logElement.innerHTML = '';
-        for (let i = 0; i < this.players.length; i++) {
-            this.updateCard(i);
-        }
+    updateCards(i) {
+        this.cardElements[i].querySelector(settings.labelSelector).textContent = settings.remaining_life_message(this.players[i].health);
+        this.cardElements[i].querySelector(settings.progressSelector).value = this.players[i].health;
     },
 
-    addEventListeners() {
-        for (const actionsButton of this.actionsButtons) {
-            actionsButton.addEventListener('click', (evt) => {
-                if (evt.currentTarget.dataset.name === 'give-up') {
-                    // TODO :
-                } else {
-                    this.play(evt.currentTarget.dataset.name);
-                }
-            });
-        }
-
-        this.formElement.addEventListener('submit', (evt) => {
-            this.start(evt);
-        });
+    displayLogs(name, damage, i) {
+        this.logElement.insertAdjacentHTML('beforeend', settings.actions[name].message(this.players[i], damage));
     },
 
     lostGame(name) {
         this.formElement.classList.remove(settings.hideElementClass);
-        this.controlElement.classList.add(settings.hideElementClass);
+        this.controlDivElement.classList.add(settings.hideElementClass);
         this.logElement.insertAdjacentHTML('beforeend', settings.lost_message(name));
-    }
-};
+        this.submitButtonElement.textContent = settings.play_again_message;
+    },
+}
 
 monsterGame.init();
